@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 
-/* eslint-disable react/prop-types */
 const Card = (props) => {
   const { id, name, status, species, gender, origin, image, onClose } = props;
 

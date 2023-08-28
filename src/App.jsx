@@ -1,17 +1,49 @@
-import { useState } from "react";
-import Cards from "./components/Cards/Cards.jsx";
+import { useState, useEffect } from "react";
+// import Cards from "./components/Cards/Cards.jsx";
 import Nav from "./components/Nav/Nav.jsx";
 import axios from 'axios'
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import About from "./components/About/About.jsx";
 import Detail from "./components/Detail/Detail.jsx";
 import PATHROUTES from "./helpers/PathRoutes.helper.js";
+import HomeView from "./views/home.view.jsx";
+import Form from "./components/Form/Form.jsx";
 // import SearchBar from "./components/SearchBar/SearchBar.jsx";
 // import characters from "./data.js";
 
 
 function App() {
+
+  const {pathname} = useLocation()
+
+  const navigate = useNavigate()
+
   const [characters, setCharacters] = useState([])
+
+  const [access, setAccess] = useState(false)
+
+  const EMAIL = ''
+  const PASSWORD = ''
+
+  function login(userData) {
+    if (userData.password === PASSWORD && userData.email === EMAIL) {
+       setAccess(true);
+       navigate('/home');
+    }
+ }
+
+ useEffect(() => {
+  !access && navigate('/');
+}, [access]);
+
+
+  const onClose = (id) => {
+    setCharacters(
+      characters.filter((char) => {
+        return char.id !== Number(id)
+      })
+    )
+   }
 
   const onSearch = (id) => {
     axios(`https://rickandmortyapi.com/api/character/${id}`).then(({ data }) => {
@@ -23,19 +55,15 @@ function App() {
     });
  }
 
- const onClose = (id) => {
-  setCharacters(
-    characters.filter((char) => {
-      return char.id !== Number(id)
-    })
-  )
- }
 
   return (
     <div className="App">
-      <Nav onSearch={onSearch} />
+      {pathname !== '/' && <Nav onSearch={onSearch} />}
       <Routes>
-        <Route path={PATHROUTES.HOME} element={<Cards characters={characters} onClose={onClose} />}/>
+        
+        <Route path={PATHROUTES.LOGIN} element={<Form login={login} />}/>
+        <Route path={PATHROUTES.HOME} element={<HomeView characters={characters} onClose={onClose} />}/>
+        {/* <Route path={PATHROUTES.HOME} element={<Cards characters={characters} onClose={onClose} />}/> */}
         <Route path={PATHROUTES.ABOUT} element={<About/>}/>
         <Route path={PATHROUTES.DETAIL} element={<Detail />}/>
       </Routes>
@@ -46,3 +74,4 @@ function App() {
 }
 
 export default App;
+
