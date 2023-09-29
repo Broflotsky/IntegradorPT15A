@@ -11,7 +11,7 @@ const Favorites = (props) => {
 
   const handleOrder = (e) => {
     dispatch(orderCards(e.target.value));
-    // setAux(!aux);
+    setAux(!aux);
   };
 
   const handleFilter = (e) => {
